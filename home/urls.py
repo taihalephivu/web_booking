@@ -18,6 +18,7 @@ from . views import *
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from hotelProject import settings
 from django.conf.urls.static import static
+from . import views
 
 urlpatterns = [
     path('', index, name='index'),
@@ -25,6 +26,9 @@ urlpatterns = [
     path('signup/', signup, name='signup'),
     path('signout/', signout, name='signout'),
     path('hotel/<uid>',get_hotel,name='get_hotel'),
+    path('profile/', user_profile, name='user_profile'),
+    path('bookings/', booking_history, name='booking_history'),
+    path('booking/cancel/<uuid:booking_id>/', cancel_booking, name='cancel_booking'),
 ]
 
 if settings.DEBUG:

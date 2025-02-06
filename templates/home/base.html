@@ -39,16 +39,21 @@
 
             </li>
             {% if request.user.is_authenticated %}
-            
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'signout' %}">Sign Out</a>
+              <a class="nav-link" href="{% url 'user_profile' %}">Thông tin cá nhân</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'booking_history' %}">Lịch sử đặt phòng</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'signout' %}">Đăng xuất</a>
             </li>
             {% else %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'signin' %}">Sign In</a>
+              <a class="nav-link" href="{% url 'signin' %}">Đăng nhập</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+              <a class="nav-link" href="{% url 'signup' %}">Đăng ký</a>
             </li>
             {% endif %}
           </ul>

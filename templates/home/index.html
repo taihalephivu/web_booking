@@ -126,151 +126,114 @@ Welcome To hotel.com
 
     <main>
         <div class="container mt-4">
-            <div class="row margin-auto">
-                <div class="col-4">
-                    <div class="card">
-                        <h5 class="card-header">Filter</h5>
-                        <div class="card-body">
-                            <form action="" class="iform-group">
-                                <div class="d-flex mb-3ammeni">
-                                    <input class="form-control me-2" type="search" placeholder="Search"
-                                        aria-label="Search" id="searchInput" name="searchInput" {% if search %}
-                                        value="{{search}}" {% endif %}>
-                                    <button class="btn btn-outline-success" id="searchBtn" type="submit">Search</button>
-                                </div>
-                                <label for="sortSelect ">
-                                    Sort By
-                                </label>
-                                <div class="mb-3">
-                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example"
-                                        id="sortSelect" name="sortSelect">
-                                        <option value="rated" {% if sort_by == "rated" %}{% endif %}>Top Rated</option>
-                                        <option value="low_to_high" {% if sort_by == "low_to_high" %} 
-                                        selected 
-                                        {% endif %}>Price Low To High</option>
-                                        <option value="high_to_low" {% if sort_by == "high_to_low" %} 
-                                        selected
-                                        {% endif %}>
-                                            Price High To Low</option>
-                                    </select>
-                                </div>
-
-
-                                <label for="selectAmenity">
-                                    Amenities
-                                </label>
-                                <select class="form-select" multiple aria-label="multiple select example"
-                                    id='selectAmenity' name="selectAmenity">
-
-
-
-                                    {% for amenity in amenities %}
-                                    <option value="{{amenity.amenity_name}}" 
-                                    {% if amenity.amenity_name in selected_amenities %} selected {% endif %}>{{amenity.amenity_name}}</option>
-                                    {% endfor %}
-                                </select>
-                                <label for="startDate" class='mt-3'>
-                                    Start Date
-                                </label>
-                                <input type="date" name="startDate" class="form-control" id="startDate"
-                                    name="startDate" min='{{date}}'>
-                                <label for="endDate" class="mt-3">
-                                    End Date
-                                </label>
-                                <input type="date" name="endDate" class="form-control" id="endDate" name="endDate" min='{{date}}'>
-                                <div class="mt-3">
-
-                                    <label for="customRange2" class="form-label">Max Price</label>
-                                    <input type="number" class="form-control mb-2" id="price" name="price" 
-                                    {% if max_value %}
-                                    value='{{max_value}}'
-                                    {% endif %}    
-                                >
-                                </div>
-                                <div class="d-grid">
-                                    <button class="btn btn-primary d-block" type="submit">
-                                        Filter
-                                    </button>
-
-                                </div>
-                            </form>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-3">
+                            <label>Tìm kiếm</label>
+                            <input type="text" name="searchInput" class="form-control" value="{{ search|default:'' }}" placeholder="Tên khách sạn...">
                         </div>
-                    </div>
-                </div>
-                <div class="col-8 ">
-
-
-                    <div class="col-5">
-                        Showing <span class="fw-bold">{{hotels|length}}</span> Results From {{total_hotels}}
-                    </div>
-
-
-
-                    <div class="">
-                        {% for hotel in hotels.object_list %}
-                        <div class="card mb-3 mt-4" style="max-width: 1000px;">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <a href="/hotel/{{hotel.uid}}">
-                                
-                                        <img src="/media/{{hotel.images.first.images}}" class="img-fluid rounded-start"
-                                            alt="...">
-                                    </a>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{hotel.hotel_name}}</h5>
-                                        <p class="card-text">{{hotel.description|truncatechars:100}}
-                                        </p>
-                                        <li class="list-group-item ">Rs. {{hotel.hotel_price}}</li>
-                                        <ul class="list-group list-group-horizontal">
-                                            {% for i in hotel.amenities.all %}
-                                            {% if forloop.counter|divisibleby:3%}
-                                        </ul>
-                                        <ul class="list-group list-group-horizontal">
-                                            {% else %}
-                                            <li class="list-group-item mt-1 mr-1">{{i}}</li>
-                                            {% endif %}
-                                            {% endfor %}
-                                        </ul>
-                                        <button class="btn btn-primary mt-2" type="submit">
-                                            Book Now
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-md-3">
+                            <label>Tiện nghi</label>
+                            <select name="selectAmenity" class="form-control" multiple>
+                                {% for amenity in amenities %}
+                                <option value="{{ amenity.amenity_name }}" 
+                                    {% if amenity.amenity_name in selected_amenities %}selected{% endif %}>
+                                    {{ amenity.amenity_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
                         </div>
-                        {% endfor %}
-
-                        <!--End Here loopo-->
-                    </div>
+                        <div class="col-md-2">
+                            <label>Sắp xếp</label>
+                            <select name="sortSelect" class="form-control">
+                                <option value="">Mặc định</option>
+                                <option value="low_to_high" {% if sort_by == 'low_to_high' %}selected{% endif %}>Giá tăng dần</option>
+                                <option value="high_to_low" {% if sort_by == 'high_to_low' %}selected{% endif %}>Giá giảm dần</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label>Check-in</label>
+                            <input type="date" name="startDate" class="form-control" min="{{ today }}" value="{{ start_date|default:'' }}">
+                        </div>
+                        <div class="col-md-2">
+                            <label>Check-out</label>
+                            <input type="date" name="endDate" class="form-control" min="{{ today }}" value="{{ end_date|default:'' }}">
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                            <a href="{% url 'index' %}" class="btn btn-secondary">Đặt lại</a>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-        </div>
-  
-        <nav>
-            <ul class="pagination justify-content-center">
-                {% if hotels.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="{{request.get_full_path|modify_url}}&page={{hotels.previous_page_number}}" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                {% endif %}
-                {% for i in no_of_pages %}
-                <li class="page-item"><a class="page-link {% if i == hotels.number %} active {% endif %}" href="{{request.get_full_path|modify_url}}&page={{i}}"
-                >{{i}}</a></li>
+
+            <div class="row">
+                {% for hotel in hotels %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        {% if hotel.hotel_images.all %}
+                        <img src="{{ hotel.hotel_images.first.images.url }}" class="card-img-top" alt="{{ hotel.hotel_name }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ hotel.hotel_name }}</h5>
+                            <p class="card-text">{{ hotel.description|truncatewords:30 }}</p>
+                            <p class="card-text"><strong>Giá:</strong> {{ hotel.hotel_price }} VNĐ/đêm</p>
+                            <p class="card-text">
+                                <strong>Tiện nghi:</strong><br>
+                                {% for amenity in hotel.amenities.all %}
+                                <span class="badge bg-secondary me-1">{{ amenity.amenity_name }}</span>
+                                {% endfor %}
+                            </p>
+                            <a href="{% url 'get_hotel' hotel.uid %}" class="btn btn-primary">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Không tìm thấy khách sạn nào phù hợp với tiêu chí tìm kiếm.
+                    </div>
+                </div>
                 {% endfor %}
-                {% if hotels.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="{{request.get_full_path|modify_url}}&page={{hotels.next_page_number}}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span> 
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
+            </div>
+
+            {% if hotels.paginator.num_pages > 1 %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if hotels.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if request.GET.searchInput %}&searchInput={{ request.GET.searchInput }}{% endif %}{% if request.GET.selectAmenity %}&selectAmenity={{ request.GET.selectAmenity }}{% endif %}{% if request.GET.sortSelect %}&sortSelect={{ request.GET.sortSelect }}{% endif %}{% if request.GET.startDate %}&startDate={{ request.GET.startDate }}{% endif %}{% if request.GET.endDate %}&endDate={{ request.GET.endDate }}{% endif %}">&laquo; Đầu</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ hotels.previous_page_number }}{% if request.GET.searchInput %}&searchInput={{ request.GET.searchInput }}{% endif %}{% if request.GET.selectAmenity %}&selectAmenity={{ request.GET.selectAmenity }}{% endif %}{% if request.GET.sortSelect %}&sortSelect={{ request.GET.sortSelect }}{% endif %}{% if request.GET.startDate %}&startDate={{ request.GET.startDate }}{% endif %}{% if request.GET.endDate %}&endDate={{ request.GET.endDate }}{% endif %}">Trước</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in hotels.paginator.page_range %}
+                    {% if hotels.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num > hotels.number|add:'-3' and num < hotels.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.searchInput %}&searchInput={{ request.GET.searchInput }}{% endif %}{% if request.GET.selectAmenity %}&selectAmenity={{ request.GET.selectAmenity }}{% endif %}{% if request.GET.sortSelect %}&sortSelect={{ request.GET.sortSelect }}{% endif %}{% if request.GET.startDate %}&startDate={{ request.GET.startDate }}{% endif %}{% if request.GET.endDate %}&endDate={{ request.GET.endDate }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if hotels.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ hotels.next_page_number }}{% if request.GET.searchInput %}&searchInput={{ request.GET.searchInput }}{% endif %}{% if request.GET.selectAmenity %}&selectAmenity={{ request.GET.selectAmenity }}{% endif %}{% if request.GET.sortSelect %}&sortSelect={{ request.GET.sortSelect }}{% endif %}{% if request.GET.startDate %}&startDate={{ request.GET.startDate }}{% endif %}{% if request.GET.endDate %}&endDate={{ request.GET.endDate }}{% endif %}">Tiếp</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ hotels.paginator.num_pages }}{% if request.GET.searchInput %}&searchInput={{ request.GET.searchInput }}{% endif %}{% if request.GET.selectAmenity %}&selectAmenity={{ request.GET.selectAmenity }}{% endif %}{% if request.GET.sortSelect %}&sortSelect={{ request.GET.sortSelect }}{% endif %}{% if request.GET.startDate %}&startDate={{ request.GET.startDate }}{% endif %}{% if request.GET.endDate %}&endDate={{ request.GET.endDate }}{% endif %}">Cuối &raquo;</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
     </main>
 
     <!-- FOOTER -->
